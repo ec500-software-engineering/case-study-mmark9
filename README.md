@@ -52,7 +52,8 @@ strictly for interacting with `React` framework to drive the frontend logic.
 cache which is accessed through the Rails controllers. 
 - __Node.js__: Used to handle streaming media to clients.
 - __yarn__: Alternative javascript package manager. I am not entirely sure why `npm` is not solely used in the project
-but from `yarn`'s description  
+but from `yarn`'s description, it aims to avoid the headaches of getting packages to install across different machines
+and configurations.
 
 Mastodon project utilizes two automated testing methods for coverage of both Ruby and javascript source code:
 
@@ -89,4 +90,5 @@ using `jest`.
 Although not as convenient as `rspec`html generated output, it does give a good idea what parts of code are touched the
 most by the test cases with a quick glance.
 
-
+#### Continuous Integration
+TODO: add continuous integration section
