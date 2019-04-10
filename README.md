@@ -2,7 +2,7 @@
 
 ## Project Description
 
-TODO: Add project description
+Mastodon is a decentralized social media platform which supports self-hosted and independent instances through federation. Federation is achieved through the AcitivityPub protocol which using mailbox system for sending and recieving messages accross different servers supporting the protocol.
 
 ## Installation
 
@@ -17,10 +17,10 @@ Model View Controller (MVC) design pattern.
 
 - __Model__: In keeping with the __DRY__ principle each tables defined in the postgres sql database instance have their 
 equivalent ruby class file in `app/models` 
-- __View__: For templating, HTML abstraction markup language (Haml) is used instead of the standard Embedded Ruby (ERB)
+- __View__: For templating, HTML abstraction markup language (`haml`) is used instead of the standard Embedded Ruby (ERB)
 templating. From looking at the process of converting ERB to Haml, it appears that Haml prefers a much less verbose
 syntax that you will typically find in many templating frameworks. ERB implements a similar templating strategy that you
-will find in many older languages (java, php, etc.). Once looking at Haml, one immediate characteristic is the influence
+will find in many older languages (java, php, etc.). Once looking at `haml`, one immediate characteristic is the influence
 of CSS like syntax.
 - __Controller__: Logic for navigating users across different endpoints are also implemented in Ruby. 
 
@@ -37,8 +37,6 @@ variables are private and can only accessed through getters and setters.
 Javascript only counts for a small percentage of the source code base (TODO: add percentage here). Its usage is
 strictly for interacting with `React` framework to drive the frontend logic.
 
-## Testing
-
 ## Technology Stack
 - __Ruby__: language used to implement the majority of backend functionality
 - __Rails__: web application framework supporting MVC design pattern
@@ -54,6 +52,8 @@ cache which is accessed through the Rails controllers.
 - __yarn__: Alternative javascript package manager. I am not entirely sure why `npm` is not solely used in the project
 but from `yarn`'s description, it aims to avoid the headaches of getting packages to install across different machines
 and configurations.
+
+## Testing
 
 Mastodon project utilizes two automated testing methods for coverage of both Ruby and javascript source code:
 
@@ -87,8 +87,25 @@ using `jest`.
 
 ![](assets/img/js_coverage_ex.png)
 
-Although not as convenient as `rspec`html generated output, it does give a good idea what parts of code are touched the
+Although not as convenient as `rspec`, html generated output, it does give a good idea what parts of code are touched the
 most by the test cases with a quick glance.
 
 #### Continuous Integration
-TODO: add continuous integration section
+Mastodon uses [circleci](https://circleci.com/) as their continuous integration platform. CircleCI is a cloud based continuous integration platform much like travisCI which provides a RESTFUL API for easy integration with user defined applications. Users configure jobs to run upon integration within the `.circleci/config.yml`. An interesting feature of CircleCI is ability to run jobs sequentially or fan out at defined points to quickly identify problematic builds. In terms of platforms, circleCI supports supports spinning up Android, GNU/Linux and macOS platforms for testing and deployment. Mastodon `circleci/config.yml` specifes the use of `circleci/ryby:2.6.0-stretch node` for the `docker` configuration. This image corresponds to the `Debian stretch` operatinng system. 
+
+## Architecture
+
+Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `Reac.js` library and a backend component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. The figure below shows the container view of the system.
+
+![](assets/img/mastodon_containers.png)
+
+
+## Issues
+
+TODO: Add issues here
+
+## Demo
+
+TODO: add demonstation images and description
+
+![](assets/img/mastodon_about_local_host.png)
