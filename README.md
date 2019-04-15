@@ -75,7 +75,7 @@ A `Flux` application consists of four components: (1) actions (2) dispatcher (3)
 on the actions. Overall redux fits nicely with user interface frameworks such as React which maintain a stateful view of the Document Object Model (DOM).
 - __react__: a popular user interface library which simplifies state management of view related concepts. The power of React starts with the virtual DOM.
 Applications which use react will indirectly manipulate the DOM by first applying changes to an in-memory copy. This modified copy is compared with the original
-DOM and changes are reconsolidated by only updating nodes within the DOM that was changed. 
+DOM and changes are reconsolidated by only updating nodes within the DOM that was changed. An interesting thing to note is that, react and redux work well together because they share the same philosophy of stateful programming. In fact redux provides native support for allowing react components to update their own state by querying the __store__.
 
 ### Thoughts on Programming Languages
 
@@ -136,8 +136,12 @@ Mastodon uses [circleci](https://circleci.com/) as their continuous integration 
 
 ## Architecture
 
-Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `React.js` library and a back-end component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. The figure below shows the container view of the system.
+Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `React.js` library and a back-end component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. To best describe the architecture, this report will present the application in three levels of abstration using the C4 design model. In the C4 model, each abstraction is tied to a specific context which governs the appropiate information that should be presented. Currently the contexts or abstraction levels are __system__, __container__ and __component__.
 
+The figure below is the __system context__ which places the software in relation to its enviornment. 
+
+
+The figure below shows the high level view of the major technologies that support mastodon.
 ![](assets/img/mastodon_containers.png)
 
 
