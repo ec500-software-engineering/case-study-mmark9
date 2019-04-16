@@ -4,12 +4,6 @@
 
 Mastodon is a decentralized social media platform which supports self-hosted and independent instances through federation. Federation is achieved through the [AcitivityPub protocol](https://www.w3.org/TR/activitypub/) which using a mailbox system for sending and receiving messages across different servers supporting the protocol.
 
-## Installation
-
-TODO: add installation steps here 
-
-From the official page, installation assumes Ubuntu 18.04 but I have Ubuntu version 16.04 on my local machine.
-
 ## Technology Stack
 - __Ruby__: language used to implement the majority of backend functionality
 - __Rails__: web application framework supporting MVC design pattern
@@ -29,7 +23,7 @@ Ruby code can be found in the directories located in the `app` parent directory.
 
 ### Ruby
 Naturally used in the backend where they implement logic needed to complete tasks such as fetch data from the 
-postgresqldatabase and render web pages for the frontend. Web pages are created using __Rails__ web application framework. Ruby code within the project follows a typical Object Oriented (OO) style where all class properties or member
+postgresql database and render web pages for the frontend. Web pages are created using __Rails__ web application framework. Ruby code within the project follows a typical Object Oriented (OO) style where all class properties or member
 variables are private and can only be accessed through getters and setters. 
 
 #### Ruby Libraries
@@ -41,12 +35,12 @@ only list a few notable libraries that are used throughout the project.
 the familiar socket function calls such as `open()`, `send()` and `read()`. In mastodon, WebSockets are mainly used to implement
 the streaming functionality that provides live updates about toots. 
 - __doorkeeper__: OAuth2 provider
-- __paper__: paperclip: provides file upload and attachment functionaility
+- __paper__: paperclip: provides file upload and attachment functionality
 - __webpacker__: provides a means to manage dependencies between javascript modules within Rails applications
 - __sidekiq__: a job scheduler library for managing jobs in Ruby. During the lifecycle of the application, Mastodon will create
 `Sidekiq::Worker`s to handle background tasks such as updating feeds and displaying notifications
 - __Rails__: 
-  - __Model__: In keeping with the __DRY__ principle each table defined in the postgresqll database instance have their equivalent ruby class file in `app/models`. Models are implemented as Active Records which are defined in the Object/Relational Mapping (ORM) layer. 
+  - __Model__: In keeping with the __DRY__ principle each table defined in the PostgreSQL database instance have their equivalent ruby class file in `app/models`. Models are implemented as Active Records which are defined in the Object/Relational Mapping (ORM) layer. 
 This allows for a seamless mapping of tables to Ruby objects. 
   - __View__: For templating, HTML abstraction markup language (`haml`) is used instead of the standard Embedded Ruby (ERB)
 templating. From looking at the process of converting ERB to Haml, it appears that Haml prefers a much less verbose
@@ -59,7 +53,7 @@ of CSS like syntax.
 Only counts for a small percentage of the source code base (26%). Javascript in mastodon is utilized to implement
 views of the various models defined in the application. User actions, such as clicking on a user profile, will invoke javascript
 generated `http` GET requests to corresponding RESTFUL endpoints. Likewise, post requests will invoke `http` post request which may
-update models stored within the database. Responses are typically in the form of a JSON dictionary containing requested information. 
+update models stored within the database. Responses are typically in the form of a JSON dictionary containing the requested information. 
 DOM updates are primarily routed to the React.js library rather interacting with the DOM directly.
 
 #### Javascript Libraries
@@ -75,13 +69,13 @@ A `Flux` application consists of four components: (1) actions (2) dispatcher (3)
   
   Redux deviates slightly from Flux in a few ways. Firstly, there is only one store which maintains a single object describing the state of the entire application. There are no dispatchers to update the store but rather __reducers__ which are pure functions that compute state changes based on the actions. 
   Overall Redux fits nicely with user interface frameworks such as React which maintain a stateful view of the Document Object Model (DOM). 
-  ![redux](assets/img/redux.png)
+  ![Redux](assets/img/redux.png)
   
 - __React__: a popular user interface library which simplifies state management of view related concepts. The power of React starts with the virtual DOM.
 Applications which use React will indirectly manipulate the DOM by first applying changes to an in-memory copy. This modified copy is compared with the original
-DOM and changes are reconsolidated by only updating nodes within the DOM that was changed. An interesting thing to note is that, React and Redux work well together; React generates
+DOM and changes are reconsolidated by only updating nodes within the DOM that was changed. An interesting thing to note is that React and Redux work well together; React generates
 state updates in response to actions which can then be used by React to update 
-In fact Redux provides native support for allowing React components to update their own state by querying the __store__.
+In fact, Redux provides native support for allowing React components to update their own state by querying the __store__.
 
 ### Thoughts on Programming Languages
 
@@ -93,14 +87,14 @@ If I were to implement an application in a similar vein to Mastodon, I would not
 be driven by biases due to familiarity. Therefore, if given the choice I would rather implement the backend using python. My experience with python
 has led me to prefer its syntax and how object-oriented concepts are implemented. However, there are some considerations I would make be committing to this idea. First, there would need to be an understanding of implications on performance (e.g. will CPython be adequate or will another implementation be needed?).
 Second, how will Mastodon in python scale as more local users create accounts and more federated mastodon server instances are created? Lastly, we have to consider if the available web frameworks for python are sufficient enough for Mastodon. I believe Django is equivalent to Rails in terms of supporting the 
-Model View Controller (MVC) paradigm. It also has the option of Django webpacker for managing frontend files.
+Model View Controller (MVC) paradigm. It also has the option of Django WebPacker for managing frontend files.
 
-## Build System
+## Build and Launch System
 
 Since Mastodon is a web application built on languages which are compiled JIT (Just in Time), there is no concept of building the application. Instead, mastodon requires several services or processes to run before it can serve clients. As a user who is not interested in underlying details, you can use `foreman` gem to spawn the needed process dependencies. In the project, two files `Procfile` and `Procfile.dev` indicate
 which processes need to run and their corresponding arguments. The `.dev` denotes launch configuration for development environments. From a quick glance
 at the production `Procfile`, mastodon spawns a `puma`) web server that houses the rails application. Additionally
-a background process, `sidekiq` is started to handle asynchronous job requests from the main Rails app.
+a background process, Sidekiq is started to handle asynchronous job requests from the main Rails app.
 
 ## Testing
 
@@ -116,7 +110,7 @@ __failing__ tests drive implementation. Despite this awkward indirection, follow
 much higher testing code coverage than the conventional ad-hoc write-tests-after-implementation.
 
 A nice feature of rspec is that it also provides a nice interface to view what percentage of your code tests cover.
-rspec generates static web page with a single `.html` after running the ruby test suite defined in the `Mastodon`
+rspec generates a static web page with a single `.html` after running the ruby test suite defined in the `Mastodon`
 project directory. The figure below shows an example of output after running the test suite.
 
 ![](assets/img/coverage_ex.png)
@@ -134,34 +128,72 @@ using `jest`.
 
 ![](assets/img/js_coverage_ex.png)
 
-Although not as convenient as the html output generated by `rspec` it does give a good idea what parts of the code are touched the
+Although not as convenient as the HTML output generated by `rspec` it does give a good idea what parts of the code are touched the
 most by the test cases with a quick glance.
 
 #### Continuous Integration
-Mastodon uses [circleci](https://circleci.com/) as their continuous integration platform. CircleCI is a cloud-based continuous integration platform much like travisCI which provides a RESTFUL API for easy integration with user-defined applications. Users configure jobs to run upon integration within the `.circleci/config.yml`. An interesting feature of CircleCI is the ability to run jobs sequentially or fan out at defined points to quickly identify problematic builds. In terms of platforms, circleCI supports spinning up Android, GNU/Linux and macOS platforms for testing and deployment. Mastodon `circleci/config.yml` specifies the use of `circleci/ryby:2.6.0-stretch node` for the `docker` configuration. This image corresponds to the `Debian stretch` operating system. 
+Mastodon uses [circleci](https://circleci.com/) as the continuous integration platform. CircleCI is a cloud-based continuous integration platform much like travisCI which provides a RESTFUL API for easy integration with user-defined applications. Users configure jobs to run upon integration within the `.circleci/config.yml`. An interesting feature of CircleCI is the ability to run jobs sequentially or fan out at defined points to quickly identify problematic builds. In terms of platforms, circleCI supports spinning up Android, GNU/Linux and macOS platforms for testing and deployment. Mastodon `circleci/config.yml` specifies the use of `circleci/ryby:2.6.0-stretch node` for the `docker` configuration. This image corresponds to the `Debian stretch` operating system. 
+
+The figure below shows the various jobs triggered by pushes to the master branch.
+
+![](assets/img/circleci_main.png)
+
+In the following figure, we can see one successful passing push in a little more detail.
+
+![](assets/img/circleci_ex_push.png)
 
 ## Architecture
 
-Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `React.js` library and a back-end component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. To best describe the architecture, this report will present the application in three levels of abstration using the [C4 design model](https://c4model.com/). In the C4 model, each abstraction is tied to a specific context which governs the appropiate information that should be presented. Currently the contexts or abstraction levels are __system__, __container__ and __component__.
+Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `React.js` library and a back-end component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. To best describe the architecture, this report will present the application in three levels of abstraction using the [C4 design model](https://c4model.com/). In the C4 model, each abstraction is tied to a specific context which governs the appropriate information that should be presented. Currently the contexts or abstraction levels are __system__, __container__ and __component__.
 
-The figure below is the __system context__ which places the software in relation to its enviornment. 
+The figure below is the __system context__ which places the software in relation to its environment. 
 
 ![system context](assets/img/mastodon_sys_context.png)
 
-The figure below is the __container context__ showing the high level view of the major technologies that support mastodon.
+Intuitively, a Mastodon instance not only interacts with users on various platforms but also other servers within the Federated Network. There is one detail that is not included in the diagram: users are not able to receive public timeline updates from domains blacklisted by Mastodon `mastodon.social`. Therefore, moderation is one of the few components that are centralized.
+
+The figure below is the __container context__ showing the high-level view of the major technologies that support mastodon.
 
 ![](assets/img/mastodon_containers.png)
 
-The figure below is the __component context__ providng a more finer grained view into the system.
+The diagram shows some of the major technologies and protocols used to support a Mastodon instance.
+
+The figure below is the __component context__ providing a finer grained view into the system.
 
 ![](assets/img/mastodon_component_context.png)
 
+In a nutshell, users interact with Mastodon through the various REST endpoints supported by the ruby application. Although the RESTFUL paradigm permits accessibility from virtually any device capable of sending HTTP requests and receiving HTTP response, I will restrict the discussion of the overall architecture to the case where the Ruby/Rails server application is severing a client running within a browser. In this scenario, web pages are generated through `ActionView` class instances. `ActionView` classes execute embedded ruby instructions found within `haml` files which are sent through HTTP response messages. Requests are handled by `ActionControllers` which will attempt to parse and interpret endpoints and their arguments. Mastodon also depends on the ability to run numerous tasks __asynchronous__ and in __parrallel__. For this, the Sidekiq framework is enlisted as the background job scheduler. Probably the most important job by Mastodon is periodically publishing local activity to subscribed users listening to a particular public timeline. Jobs for SideKiq are stored in Redis by controllers and services running in Mastodon. These sequence of jobs are treated as a queue. Models or `ActiveRecords` may also be stored in Redis to exploit temporal locality present in the current ORM access patterns. However, there will be times where model data requires a more expensive fetch through PostgreSQL.
+
 ## Issues
 
-TODO: Add issues here
+At the time of writing, there are roughly 1,000+ issues opened by the Mastodon community. For this report, I restricted my search to bugs since oftentimes the outcome can be objectively judged. 
+- [Backspace keyboard shortcut doesn't work in firefox #8432](https://github.com/tootsuite/mastodon/issues/8432): A user claims that the `backspace` shortcut, which closes the profile column, fails to work on recent versions of Firefox running on Windows 10. From reading the description, it appears that most of the work will be in reproducing this issue to narrow down the cause. There can be many potential culprits for this issue but one likely culprit is the use of features in javascript that is supported in chrome but not Firefox. Such an issue may require rewriting the code to be more portable or in worse case inserting browser-specific code. I did confirm on my local instance on Firefox the backspace shortcut works so further troubleshooting is needed.
+- [Animated PNGs autoplay with autoplay disabled #9981](https://github.com/tootsuite/mastodon/issues/9981): Animated Portable Network Graphics (APNG) are not supported on Mastodon; only the first frame is shown when a browser decides to render the image. Fixing this issue will require updating the back-end to detect if a PNG file should be animated. This will require at least one function to search for a [signature](https://stackoverflow.com/questions/4525152/can-i-programmatically-determine-if-a-png-is-animated/4525194#4525194) within the image. 
 
 ## Demo
 
-TODO: add demonstation images and description
+The figure below highlight the typical usage of Mastodon. Note that this instance is spawned from a development configuration but the functionality is equivalent to a production server. 
+
+### Launching application
+
+To test Mastodon, I spawned a local instance with a web server listening on the default port `3000`.
+
+![](assets/img/launching_app.png)
+
+### Landing page for an unregistered user
 
 ![](assets/img/mastodon_about_local_host.png)
+
+### Home page after registering
+
+In this view, you can see toots in both the local timeline and federated timeline.
+
+![](assets/img/full_screen.png)
+
+### Editing your profile
+
+![](assets/img/edit_profile_page.png)
+
+### Bio page
+
+![](assets/img/bio_page.png)
