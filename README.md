@@ -2,7 +2,7 @@
 
 ## Project Description
 
-Mastodon is a decentralized social media platform which supports self-hosted and independent instances through federation. Federation is achieved through the AcitivityPub protocol which using a mailbox system for sending and receiving messages across different servers supporting the protocol.
+Mastodon is a decentralized social media platform which supports self-hosted and independent instances through federation. Federation is achieved through the [AcitivityPub protocol](https://www.w3.org/TR/activitypub/) which using a mailbox system for sending and receiving messages across different servers supporting the protocol.
 
 ## Installation
 
@@ -40,6 +40,8 @@ only list a few notable libraries that are used throughout the project.
 - __websocket__: library providing an API to support bidirectional communication between `javascript` and `ruby` backend through
 the familiar socket function calls such as `open()`, `send()` and `read()`. In mastodon, WebSockets are mainly used to implement
 the streaming functionality that provides live updates about toots. 
+- __doorkeeper__: OAuth2 provider
+- __paper__: paperclip: provides file upload and attachment functionaility
 - __webpacker__: provides a means to manage dependencies between javascript modules within Rails applications
 - __sidekiq__: a job scheduler library for managing jobs in Ruby. During the lifecycle of the application, Mastodon will create
 `Sidekiq::Worker`s to handle background tasks such as updating feeds and displaying notifications
@@ -62,20 +64,24 @@ DOM updates are primarily routed to the React.js library rather interacting with
 
 #### Javascript Libraries
 
-- __redux__: a library providing a maintainable approach to stateful user interface design. Redux closely follows the `Flux` design pattern which helps developers reason about complex state mutations as a result of various factors within non-trivial applications.
+- __Redux__: a library providing a maintainable approach to stateful user interface design. Redux closely follows the `Flux` design pattern which helps developers reason about complex state mutations as a result of various factors within non-trivial applications.
 A `Flux` application consists of four components: (1) actions (2) dispatcher (3) stores and (4) controller-views. 
-  - __actions__: an object describing units of updates which should be applied to a store
+  - __actions__: an object describing units of updates which should be applied to a state tree
   - __dispatcher__: distributes created actions to stores which register callback functions with the dispatcher
   - __store__: represents the state of a component. The state is not manipulated directly but rather through actions. This inversion of control nicely
   enforces SoC (Separation of Concerns) and promotes more maintainable code
   - __controller-view__: the stores pass the newly computed state objects to their respective or interested views so that their own state can
   be updated accordingly.
   
-  redux deviates slightly from Flux in a few ways. Firstly, there is only one store which maintains a single object describing the state of the entire application. There are no dispatchers to update the store but rather __reducers__ which are pure functions that compute state changes based
-on the actions. Overall redux fits nicely with user interface frameworks such as React which maintain a stateful view of the Document Object Model (DOM).
-- __react__: a popular user interface library which simplifies state management of view related concepts. The power of React starts with the virtual DOM.
-Applications which use react will indirectly manipulate the DOM by first applying changes to an in-memory copy. This modified copy is compared with the original
-DOM and changes are reconsolidated by only updating nodes within the DOM that was changed. An interesting thing to note is that, react and redux work well together because they share the same philosophy of stateful programming. In fact redux provides native support for allowing react components to update their own state by querying the __store__.
+  Redux deviates slightly from Flux in a few ways. Firstly, there is only one store which maintains a single object describing the state of the entire application. There are no dispatchers to update the store but rather __reducers__ which are pure functions that compute state changes based on the actions. 
+  Overall Redux fits nicely with user interface frameworks such as React which maintain a stateful view of the Document Object Model (DOM). 
+  ![redux](assets/img/redux.png)
+  
+- __React__: a popular user interface library which simplifies state management of view related concepts. The power of React starts with the virtual DOM.
+Applications which use React will indirectly manipulate the DOM by first applying changes to an in-memory copy. This modified copy is compared with the original
+DOM and changes are reconsolidated by only updating nodes within the DOM that was changed. An interesting thing to note is that, React and Redux work well together; React generates
+state updates in response to actions which can then be used by React to update 
+In fact Redux provides native support for allowing React components to update their own state by querying the __store__.
 
 ### Thoughts on Programming Languages
 
@@ -86,14 +92,14 @@ language frontend applications.
 If I were to implement an application in a similar vein to Mastodon, I would not deviate too much from their choices. My changes would mainly
 be driven by biases due to familiarity. Therefore, if given the choice I would rather implement the backend using python. My experience with python
 has led me to prefer its syntax and how object-oriented concepts are implemented. However, there are some considerations I would make be committing to this idea. First, there would need to be an understanding of implications on performance (e.g. will CPython be adequate or will another implementation be needed?).
-Second, how will mastodon python backend scale as more local users create accounts and more federated mastodon server instances are created? Lastly, we have to consider if the available web frameworks for python are sufficient enough for mastodon. I believe Django is equivalent to Rails in terms of supporting the 
-Model View Controller paradigm. It also has the option of Django webpacker for managing frontend files.
+Second, how will Mastodon in python scale as more local users create accounts and more federated mastodon server instances are created? Lastly, we have to consider if the available web frameworks for python are sufficient enough for Mastodon. I believe Django is equivalent to Rails in terms of supporting the 
+Model View Controller (MVC) paradigm. It also has the option of Django webpacker for managing frontend files.
 
 ## Build System
 
 Since Mastodon is a web application built on languages which are compiled JIT (Just in Time), there is no concept of building the application. Instead, mastodon requires several services or processes to run before it can serve clients. As a user who is not interested in underlying details, you can use `foreman` gem to spawn the needed process dependencies. In the project, two files `Procfile` and `Procfile.dev` indicate
 which processes need to run and their corresponding arguments. The `.dev` denotes launch configuration for development environments. From a quick glance
-at the production `Procfile`, mastodon spawns a [puma](https://github.com/puma/puma) web server that houses the rails application. Additionally
+at the production `Procfile`, mastodon spawns a `puma`) web server that houses the rails application. Additionally
 a background process, `sidekiq` is started to handle asynchronous job requests from the main Rails app.
 
 ## Testing
@@ -103,7 +109,7 @@ Mastodon project utilizes two automated testing methods for coverage of both Rub
 #### Ruby testing
 Ruby testing is automated through
 [rspec](rspec.info),  a testing framework applications developed in the Ruby programming language. The philosophy of
-this framework is __Test Driver Development__ or (__TDD__). Canonical TDD emphasizes that tests be developed in parallel
+this framework is __Test Driven Development__ or (__TDD__). Canonical TDD emphasizes that tests be developed in parallel
 with implementations. However, for many developers, this is a challenge because the additional overhead of maintaining both
 application logic and testing logic can be burdensome. With TDD, the idea is to develop tests beforehand and let
 __failing__ tests drive implementation. Despite this awkward indirection, following this paradigm can better guarantee
@@ -128,7 +134,7 @@ using `jest`.
 
 ![](assets/img/js_coverage_ex.png)
 
-Although not as convenient as `rspec`, html generated output, it does give a good idea what parts of the code are touched the
+Although not as convenient as the html output generated by `rspec` it does give a good idea what parts of the code are touched the
 most by the test cases with a quick glance.
 
 #### Continuous Integration
@@ -136,14 +142,19 @@ Mastodon uses [circleci](https://circleci.com/) as their continuous integration 
 
 ## Architecture
 
-Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `React.js` library and a back-end component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. To best describe the architecture, this report will present the application in three levels of abstration using the C4 design model. In the C4 model, each abstraction is tied to a specific context which governs the appropiate information that should be presented. Currently the contexts or abstraction levels are __system__, __container__ and __component__.
+Mastodon's architecture is similar to that of a conventional web application; it features a responsive frontend using Facebook's `React.js` library and a back-end component which handles retrieving and updating models along with providing the correct views to the user depending on the RESTFUL endpoint. To best describe the architecture, this report will present the application in three levels of abstration using the [C4 design model](https://c4model.com/). In the C4 model, each abstraction is tied to a specific context which governs the appropiate information that should be presented. Currently the contexts or abstraction levels are __system__, __container__ and __component__.
 
 The figure below is the __system context__ which places the software in relation to its enviornment. 
 
+![system context](assets/img/mastodon_sys_context.png)
 
-The figure below shows the high level view of the major technologies that support mastodon.
+The figure below is the __container context__ showing the high level view of the major technologies that support mastodon.
+
 ![](assets/img/mastodon_containers.png)
 
+The figure below is the __component context__ providng a more finer grained view into the system.
+
+![](assets/img/mastodon_component_context.png)
 
 ## Issues
 
