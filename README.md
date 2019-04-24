@@ -170,7 +170,7 @@ At the time of writing, there are roughly 1,000+ issues opened by the Mastodon c
 - [Backspace keyboard shortcut doesn't work in firefox #8432](https://github.com/tootsuite/mastodon/issues/8432): A user claims that the `backspace` shortcut, which closes the profile column, fails to work on recent versions of Firefox running on Windows 10. From reading the description, it appears that most of the work will be in reproducing this issue to narrow down the cause. There can be many potential culprits for this issue but one likely culprit is the use of features in javascript that is supported in chrome but not Firefox. Such an issue may require rewriting the code to be more portable or in worse case inserting browser-specific code. I did confirm on my local instance on Firefox the backspace shortcut works so further troubleshooting is needed.
 - [Animated PNGs autoplay with autoplay disabled #9981](https://github.com/tootsuite/mastodon/issues/9981): Animated Portable Network Graphics (APNG) are not supported on Mastodon; only the first frame is shown when a browser decides to render the image. Fixing this issue will require updating the back-end to detect if a PNG file should be animated. This will require at least one function to search for a [signature](https://stackoverflow.com/questions/4525152/can-i-programmatically-determine-if-a-png-is-animated/4525194#4525194) within the image. 
 
-## Demo
+## Example Usage
 
 The figure below highlight the typical usage of Mastodon. Note that this instance is spawned from a development configuration but the functionality is equivalent to a production server. 
 
@@ -197,3 +197,58 @@ In this view, you can see toots in both the local timeline and federated timelin
 ### Bio page
 
 ![](assets/img/bio_page.png)
+
+## Example Application
+
+As mentioned earlier, Mastodon exposes RESTFUL endpoints to any clients that can communicate over HTTP/HTTPS. This provides developers with a set of powerful tools that are only limited by their creativity. To highlight this point I created a simple python prototype called `handsfree_mastodon`. The aim of this application is to allow a user to interact with Mastodon through speech. A typical use case is the elderly who may not wish to type long passages and would rather just voice their intentions through their microphone. The demo script is found under `demo/handsfree_mastodon`. Dependencies specified in `demo/requirements.txt` should be resolved before running the application. The application takes no arguments on through command line. It does require an internet connection to offload speech processing to Google servers. Code snippet below shows usage of the REST API wrappers:
+```python
+def register_app():
+    client_id, client_secret = Mastodon.create_app(
+        'test-app',
+        ['read',
+         'write',
+         'follow',
+         'push'],
+        api_base_url=SERVER_BASER_URL
+    )
+    print('client id = {} and client secret = {}'.format(
+        client_id,
+        client_secret
+    ))
+
+
+def post_toot(toot_msg, mastodon_client):
+    print('Tooting "{}"'.format(toot_msg))
+    res = mastodon_client.toot(toot_msg)
+    print(res)
+
+
+def follow_a_user(name, mastodon_client):
+    user_dicts = mastodon_client.account_search(name)
+    if len(user_dicts) > 0:
+        print('Following user {}:{}..'.format(
+            user_dicts[0]['username'],
+            user_dicts[0]['url']
+        ))
+        res = mastodon_client.account_follow(user_dicts[0]['id'])
+        print(res)
+    else:
+        print('Could not find user with name "{}"'.format(name))
+
+
+def unfollow_a_user(name, mastodon_client):
+    user_dicts = mastodon_client.account_search(name)
+    if len(user_dicts) > 0:
+        print('Unfollowing user {}:{}..'.format(
+            user_dicts[0]['username'],
+            user_dicts[0]['url']
+        ))
+        res = mastodon_client.account_unfollow(user_dicts[0]['id'])
+        print(res)
+    else:
+        print('Could not find user with name "{}"'.format(name))
+```
+
+
+
+
