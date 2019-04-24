@@ -116,7 +116,6 @@ def main():
                 timeout=10,
                 phrase_time_limit=10
             )
-            print(audio)
             print('Sending audio sample to google recognition service...')
             try:
                 speech = r.recognize_google(audio)
